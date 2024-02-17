@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Revise Pigi game</title>
+
+    <!-- css link -->
+    <link rel="stylesheet" href="pigi_game_style.css" />
+
+    <!-- link css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <div id="container">
+      <!-- column_one -->
+      <div class="column active col-1" id="column_one">
+        <h2 class="player p_one" id="p_1_title">Player 1</h2>
+        <p class="score score_1">0</p>
+        <div class="current cur_one">
+          <p class="current_label">current</p>
+          <p class="current_score" id="p_1_curScore"></p>
+        </div>
+      </div>
+      <!-- column_two -->
+      <div class="column col-2" id="column_two">
+        <h2 class="player p_two">Player 2</h2>
+        <p class="score score_2">0</p>
+        <div class="current cur_two">
+          <h4 class="current_label">current</h4>
+          <p class="current_score" id="p_2_curScore"></p>
+        </div>
+      </div>
+    </div>
+    <img src="image/ludo_1.png" alt="" id="dice_img" />
+    <button class="btn btn_new">
+      <i class="bi bi-play-fill" id="icon_new"></i>
+      &nbspNew Game
+    </button>
+    <button class="btn btn_roll" id="btn_roll_dice">
+      <i class="bi bi-dice-1 dice_icon"></i>
+      &nbspRoll Dice
+    </button>
+    <button class="btn btn_hold">
+      <i class="bi bi-joystick joystick_icon"></i>
+      &nbspHold
+    </button>
+  </body>
+  <script>
+    // selecting html
+    let col_one = document.querySelector('.col-1')
+    let col_two = document.querySelector('.col-2')
+    let col_one_score = document.querySelector('.score_1')
+    let col_two_score = document.querySelector('.score_2')
+    let col_one_curScore = document.getElementById('p_1_curScore')
+    let col_two_curScore = document.getElementById('p_2_curScore')
+    let dice = document.getElementById('dice_img')
+    let NewBtn = document.querySelector('.btn_new')
+    let RollBtn = document.querySelector('.btn_roll')
+    let HoldBtn = document.querySelector('.btn_hold')
+    console.log(HoldBtn)
+    // alice default varible value
+    let init = function () {
+      curScore = 0
+      activeMode = 1
+      scores = [0, 0, 0]
+      playing = true
+      dice.classList.add('hidden')
+      document.getElementById('p_1_curScore').textContent = 0
+      document.getElementById('p_2_curScore').textContent = 0
+      document.querySelector('.score_1').textContent = 0
+      col_one.classList.add('active')
+      document.querySelector('.score_2').textContent = 0
+    }
+    init()
+    //switch player
+    switchPlayer = function () {
+      document.getElementById(`p_${activeMode}_curScore`).textContent = 0
+      col_one.classList.toggle('active')
+      col_two.classList.toggle('active')
+      curScore = 0
+      activeMode = activeMode == 1 ? 2 : 1
+    }
+    // ROLLER BUTTON START CODE
+    RollBtn.addEventListener('click', function () {
+      // 1.generate random no
+      if (playing) {
+        let Comp_no = Math.ceil(Math.random() * 6)
+        console.log(Comp_no)
+
+        //   2. rolle dice
+        dice.classList.remove('hidden')
+        dice.src = `image/ludo_${Comp_no}.png`
+
+        //add current score
+        if (Comp_no !== 1) {
+          curScore += Comp_no
+          console.log(`curScore: ${curScore}`)
+          document.getElementById(
+            `p_${activeMode}_curScore`,
+          ).textContent = curScore
+        } else {
+          switchPlayer()
+        }
+      }
+    })
+
+    // HOld BUTTON START CODE
+    HoldBtn.addEventListener('click', function () {
+      if (playing) {
+        scores[activeMode] += curScore
+        document.querySelector(`.score_${activeMode}`).textContent =
+          scores[activeMode]
+        curScore = 0
+        if (scores[activeMode] >= 100) {
+          document.querySelector(`.col-${activeMode}`).classList.add('win')
+          document
+            .querySelector(`.col-${activeMode}`)
+            .classList.remove('active')
+          dice.classList.add('hidden')
+          playing = false
+          document.getElementById(`p_${activeMode}_curScore`).innerHTML =
+            '<i class="bi bi-trophy-fill" style="color:yellow"></i> <font color="green" size="5">win match</font>'
+        }
+        switchPlayer()
+        curScore = 0
+      }
+    })
+
+    // // HOld BUTTON START CODE
+    NewBtn.addEventListener('click', function () {
+      //   document.querySelector(`.col-${activeMode}`).classList.remove('active')
+      document.querySelector(`.col-${activeMode}`).classList.remove('win')
+      init()
+    })
+  </script>
+</html>
